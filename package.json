@@ -3,9 +3,6 @@
   "version": "2.0.0",
   "private": false,
   "description": "The Prompt Genome Engine — decompose LLM prompts into functional genes, score each independently, and apply targeted mutations backed by research.",
-  "bin": {
-    "promptlint": "bin/install.mjs"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,25 +11,12 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "files": [
-    "bin/",
-    ".claude-plugin/",
-    "commands/",
-    "skills/",
-    "evals/",
-    "LICENSE",
-    "README.md"
-  ],
   "keywords": [
     "prompt-genome-engine",
-    "promptlint",
     "prompt-engineering",
-    "prompt-evaluation",
     "prompt-decomposition",
     "prompt-mutation",
     "gene-analysis",
-    "claude-code",
-    "claude-code-plugin",
     "llm",
     "research-backed"
   ],

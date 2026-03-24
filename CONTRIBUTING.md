@@ -1,6 +1,6 @@
-# Contributing to PromptLint
+# Contributing to Prompt Genome Engine
 
-Thanks for your interest in improving PromptLint! Here's how to get involved.
+Thanks for your interest in improving the Prompt Genome Engine! Here's how to get involved.
 
 ## How to contribute
 

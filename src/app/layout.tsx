@@ -6,19 +6,18 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
-  title: 'PromptLint — Lint your LLM prompts',
-  description: 'Score your prompt across 7 dimensions, get actionable feedback, and generate an improved version. By EpicWise.',
+  title: 'Prompt Genome Engine — Decompose, Score, Mutate, Evolve',
+  description: 'Decompose LLM prompts into functional genes, score each independently, and apply targeted mutations backed by research. By EpicWise.',
   openGraph: {
-    title: 'PromptLint — Lint your LLM prompts',
-    description: 'Score your prompt across 7 dimensions, get actionable feedback, and generate an improved version.',
-    url: 'https://promptlint.vercel.app',
-    siteName: 'PromptLint',
+    title: 'Prompt Genome Engine — Decompose, Score, Mutate, Evolve',
+    description: 'Decompose LLM prompts into functional genes, score each independently, and apply targeted mutations backed by research.',
+    siteName: 'Prompt Genome Engine',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PromptLint — Lint your LLM prompts',
-    description: 'Score your prompt across 7 dimensions, get actionable feedback, and generate an improved version.',
+    title: 'Prompt Genome Engine — Decompose, Score, Mutate, Evolve',
+    description: 'Decompose LLM prompts into functional genes, score each independently, and apply targeted mutations backed by research.',
   },
 }
 

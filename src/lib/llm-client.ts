@@ -120,8 +120,8 @@ const PROVIDER_CONFIG: Record<Provider, ProviderConfig> = {
     buildHeaders: (apiKey) => ({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
-      'HTTP-Referer': 'https://promptlint.vercel.app',
-      'X-Title': 'PromptLint',
+      'HTTP-Referer': 'https://prompt-genome-engine.vercel.app',
+      'X-Title': 'Prompt Genome Engine',
     }),
     buildBody: chatCompletionBodyBuilder,
     extractContent: chatCompletionExtractor,
