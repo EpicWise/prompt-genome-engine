@@ -1,0 +1,24 @@
+{
+  "name": "promptlint",
+  "version": "1.0.0",
+  "description": "A linter for LLM prompts. Scores your prompt across 7 dimensions, flags technique gaps for your use case, and generates an improved version. Supports multi-source RAG, agentic, classification, and other prompt patterns.",
+  "author": {
+    "name": "EpicWise",
+    "email": "ankit.verma@epicwise.io",
+    "url": "https://github.com/EpicWise"
+  },
+  "keywords": [
+    "promptlint",
+    "prompt-engineering",
+    "prompt-evaluation",
+    "prompt-linter",
+    "rag",
+    "multi-source-rag",
+    "code-intelligence",
+    "agentic",
+    "llm",
+    "best-practices"
+  ],
+  "homepage": "https://github.com/EpicWise/promptlint",
+  "license": "MIT"
+}

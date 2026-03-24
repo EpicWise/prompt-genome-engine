@@ -1,0 +1,29 @@
+{
+  "skill_name": "prompt-evaluator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Evaluate the prompt at evals/test-prompts/weak-agent-prompt.md — use case: Agentic customer support bot that handles refund requests, billing inquiries, and account issues. It has access to tools for looking up orders, processing refunds, and escalating to human agents.",
+      "expected_output": "Should score low overall (likely 1.5-2.5/5). Clarity might be OK (3) but Structure (1-2), Examples (1), Output Contract (1), Technique Fitness (1-2, missing ReAct/tool patterns for agentic use case), and Robustness (1, no safety rails for destructive actions like refunds) should all be weak. The improved version should add XML structure, tool definitions, safety confirmation for refunds, and an output contract.",
+      "files": ["evals/test-prompts/weak-agent-prompt.md"]
+    },
+    {
+      "id": 2,
+      "prompt": "Evaluate the prompt at evals/test-prompts/medium-classification-prompt.md — use case: Production support ticket routing pipeline that classifies ~500 tickets/day into categories for auto-routing to the right team.",
+      "expected_output": "Should score medium overall (likely 2.5-3.5/5). Clarity should be decent (3-4), Examples present but limited (3, only 3 examples, no edge cases, no 'other' or 'account_access' examples). Output Contract weak (2, no JSON format spec for a pipeline). Technique Fitness medium (3, has few-shot but missing structured output for pipeline use). Robustness weak (1-2, no handling of ambiguous tickets, no confidence score, no multi-label consideration). Improved version should add JSON output, confidence scores, more diverse examples, and edge case handling.",
+      "files": ["evals/test-prompts/medium-classification-prompt.md"]
+    },
+    {
+      "id": 3,
+      "prompt": "Evaluate the prompt at evals/test-prompts/strong-rag-prompt.md — use case: Internal research assistant for a company knowledge base, used by engineering, product, and ops teams to get answers grounded in company documentation.",
+      "expected_output": "Should score high overall (likely 3.5-4.5/5). Strong on Structure (5, good XML tags), Clarity (4-5), Context (4, explains why accuracy matters), Output Contract (4, has format template). Technique Fitness should be strong (4, good RAG pattern with grounding). Weaker on Examples (1-2 or N/A, no few-shot demonstrations) and Robustness (3, has uncertainty handling but no prompt injection defense for user questions, no handling of contradictory documents). Improved version should add input sanitization and conflict resolution instructions.",
+      "files": ["evals/test-prompts/strong-rag-prompt.md"]
+    },
+    {
+      "id": 4,
+      "prompt": "Evaluate the prompt at evals/test-prompts/hybrid-graph-prompt.md — use case: Hybrid engineering assistant that receives context from a code graph RAG system (actual code snippets with file paths and line numbers), Jira tickets (with IDs, statuses, assignees), Slack threads (with speaker attribution and timestamps), and internal PDF documentation (with page/section references). Developers ask it questions about bugs, architecture, and project status. The response generator must preserve code exactly as retrieved and cite all sources traceably.",
+      "expected_output": "Should score medium-low overall (likely 2-3/5). Clarity is OK (3, guidelines are reasonable but vague). Context is weak (2, no explanation of why fidelity matters). Structure is weak (2, no XML tags, context is a single blob with no source type tagging). Examples is N/A or 1 (no demonstrations of expected multi-source response). Output Contract is weak (2, no format spec for how to present code vs. analysis vs. citations). Technique Fitness should be low (2, the source fidelity sub-rubric should activate — no per-type fidelity rules, no context tagging, no conflict resolution, 'include code' is not the same as 'preserve code verbatim'). Robustness is weak (2, basic uncertainty handling but no prompt injection defense, no conflict resolution). The improved version should add XML source tagging, per-type fidelity rules, a structured output format separating LLM analysis from source material, conflict resolution instructions, and attribution requirements.",
+      "files": ["evals/test-prompts/hybrid-graph-prompt.md"]
+    }
+  ]
+}

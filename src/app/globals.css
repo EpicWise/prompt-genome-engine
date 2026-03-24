@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 64%;
+    --radius: 0.625rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Markdown rendering */
+.markdown-report h1 { @apply text-2xl font-bold mt-6 mb-3 text-foreground; }
+.markdown-report h2 { @apply text-xl font-semibold mt-5 mb-2 text-foreground; }
+.markdown-report h3 { @apply text-lg font-semibold mt-4 mb-2 text-foreground; }
+.markdown-report p { @apply my-2 leading-7 text-muted-foreground; }
+.markdown-report strong { @apply text-foreground; }
+.markdown-report ul, .markdown-report ol { @apply pl-6 my-2; }
+.markdown-report li { @apply my-1 leading-6 text-muted-foreground; }
+.markdown-report table { @apply w-full border-collapse my-3 text-sm; }
+.markdown-report th { @apply text-left px-3 py-2 border-b-2 border-border text-foreground font-semibold; }
+.markdown-report td { @apply px-3 py-2 border-b border-border text-muted-foreground; }
+.markdown-report code { @apply bg-muted px-1.5 py-0.5 rounded text-sm text-foreground; }
+.markdown-report pre { @apply bg-muted p-4 rounded-lg overflow-x-auto my-3 border border-border; }
+.markdown-report pre code { @apply bg-transparent p-0 text-muted-foreground; }
+.markdown-report hr { @apply border-t border-border my-6; }
+.markdown-report blockquote { @apply border-l-[3px] border-foreground pl-4 my-3 text-muted-foreground italic; }
+
+/* Textarea styling */
+textarea {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+}
+
+/* Loading animation */
+@keyframes pulse-dot {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+.loading-dot {
+  animation: pulse-dot 1.4s infinite ease-in-out both;
+}
+.loading-dot:nth-child(1) { animation-delay: -0.32s; }
+.loading-dot:nth-child(2) { animation-delay: -0.16s; }
