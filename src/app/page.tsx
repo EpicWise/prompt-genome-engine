@@ -189,6 +189,7 @@ export default function Home() {
               useCase={useCase}
               apiKey={apiKey}
               provider={provider}
+              onPromptChange={setPrompt}
             />
           </div>
         </div>
