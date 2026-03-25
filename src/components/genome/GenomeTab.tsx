@@ -1,20 +1,22 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { GenomeResult, GeneType } from '@/types/genome'
+import type { GenomeResult, GeneType, MutationResult, Gene } from '@/types/genome'
 import { GeneMapBar } from './GeneMapBar'
 import { GeneDetailCard } from './GeneDetailCard'
 import { GeneAnnotatedPrompt } from './GeneAnnotatedPrompt'
 import { GenomeOverview } from './GenomeOverview'
+import { PromptDiffView } from './PromptDiffView'
 
 interface GenomeTabProps {
   prompt: string
   useCase: string
   apiKey: string
   provider: 'anthropic' | 'openai' | 'openrouter'
+  onPromptChange: (newPrompt: string) => void
 }
 
-function LoadingState() {
+function LoadingState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
       <div className="flex items-center gap-1.5 mb-3">
@@ -25,8 +27,7 @@ function LoadingState() {
           />
         ))}
       </div>
-      <p className="text-sm">Decomposing prompt into genes...</p>
-      <p className="text-xs mt-1">Analyzing 9 functional regions</p>
+      <p className="text-sm">{message}</p>
     </div>
   )
 }
@@ -51,11 +52,14 @@ function EmptyState({ onAnalyze, disabled }: { onAnalyze: () => void; disabled: 
   )
 }
 
-export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps) {
+export function GenomeTab({ prompt, useCase, apiKey, provider, onPromptChange }: GenomeTabProps) {
   const [loading, setLoading] = useState(false)
+  const [mutating, setMutating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<GenomeResult | null>(null)
   const [selectedGene, setSelectedGene] = useState<GeneType | null>(null)
+  const [mutationResult, setMutationResult] = useState<MutationResult | null>(null)
+  const [mutatingGene, setMutatingGene] = useState<Gene | null>(null)
 
   const handleAnalyze = useCallback(async () => {
     if (!prompt.trim() || !useCase.trim() || !apiKey.trim()) {
@@ -67,6 +71,8 @@ export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps)
     setError(null)
     setResult(null)
     setSelectedGene(null)
+    setMutationResult(null)
+    setMutatingGene(null)
 
     try {
       const res = await fetch('/api/genome', {
@@ -78,7 +84,7 @@ export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps)
 
       if (!res.ok) {
         if (data.fallback === 'holistic') {
-          setError('This prompt\'s structure is too ambiguous for gene-level analysis. Try the Lint tab for holistic evaluation.')
+          setError('This prompt\'s structure is too ambiguous for gene-level analysis.')
         } else {
           setError(data.error || 'Genome analysis failed.')
         }
@@ -86,7 +92,6 @@ export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps)
       }
 
       setResult(data as GenomeResult)
-      // Auto-select weakest gene
       if (data.genomeMap?.weakestGene) {
         setSelectedGene(data.genomeMap.weakestGene)
       }
@@ -97,11 +102,88 @@ export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps)
     }
   }, [prompt, useCase, apiKey, provider])
 
-  const selectedGeneData = result?.genes.find(g => g.type === selectedGene)
+  const handleMutate = useCallback(async (gene: Gene) => {
+    if (!gene.suggestedMutation) return
 
+    setMutating(true)
+    setMutatingGene(gene)
+    setMutationResult(null)
+    setError(null)
+
+    try {
+      const res = await fetch('/api/mutate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt,
+          geneType: gene.type,
+          mutationOperator: gene.suggestedMutation.operator,
+          useCase,
+          apiKey,
+          provider,
+          geneContent: gene.content,
+        }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Mutation failed.')
+        return
+      }
+
+      setMutationResult(data as MutationResult)
+    } catch {
+      setError('Network error during mutation.')
+    } finally {
+      setMutating(false)
+    }
+  }, [prompt, useCase, apiKey, provider])
+
+  const handleApplyMutation = useCallback(() => {
+    if (!mutationResult?.mutatedPrompt) return
+    onPromptChange(mutationResult.mutatedPrompt)
+    setMutationResult(null)
+    setMutatingGene(null)
+    // Re-analyze with the new prompt will happen when user clicks Decompose again
+    setResult(null)
+    setSelectedGene(null)
+  }, [mutationResult, onPromptChange])
+
+  const handleDismissMutation = useCallback(() => {
+    setMutationResult(null)
+    setMutatingGene(null)
+  }, [])
+
+  const selectedGeneData = result?.genes.find(g => g.type === selectedGene)
   const canAnalyze = prompt.trim().length >= 10 && useCase.trim().length >= 3 && apiKey.trim().length > 0
 
-  if (loading) return <LoadingState />
+  // Mutating state
+  if (mutating) return <LoadingState message={`Mutating ${mutatingGene?.type} gene...`} />
+
+  // Show diff view when mutation is ready
+  if (mutationResult && mutatingGene) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
+          Mutation ready for <strong>{mutatingGene.type}</strong> gene. Review the changes below.
+        </div>
+        <PromptDiffView
+          original={prompt}
+          mutated={mutationResult.mutatedPrompt}
+          technique={mutationResult.technique}
+          citation={mutationResult.citation}
+          expectedImpact={mutationResult.expectedImpact}
+          onApply={handleApplyMutation}
+          onDismiss={handleDismissMutation}
+        />
+      </div>
+    )
+  }
+
+  // Initial loading
+  if (loading) return <LoadingState message="Decomposing prompt into genes..." />
+
+  // Empty state
   if (!result) return (
     <div className="space-y-3">
       <EmptyState onAnalyze={handleAnalyze} disabled={!canAnalyze} />
@@ -143,7 +225,10 @@ export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps)
         {/* Right: Selected gene detail */}
         <div>
           {selectedGeneData ? (
-            <GeneDetailCard gene={selectedGeneData} />
+            <GeneDetailCard
+              gene={selectedGeneData}
+              onMutate={selectedGeneData.suggestedMutation ? () => handleMutate(selectedGeneData) : undefined}
+            />
           ) : (
             <div className="border border-dashed border-border rounded-lg p-8 text-center text-sm text-muted-foreground">
               Click a gene in the map above to see details
@@ -152,8 +237,11 @@ export function GenomeTab({ prompt, useCase, apiKey, provider }: GenomeTabProps)
         </div>
       </div>
 
-      {/* Re-analyze button */}
-      <div className="flex justify-end">
+      {/* Actions */}
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">
+          Click a weak gene → review the suggestion → Apply Mutation → your prompt updates automatically
+        </p>
         <button
           onClick={handleAnalyze}
           disabled={loading}
