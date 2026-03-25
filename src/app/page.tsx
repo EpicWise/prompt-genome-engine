@@ -7,6 +7,46 @@ import { GenomeHero } from '@/components/genome/GenomeHero'
 
 type Provider = 'anthropic' | 'openai' | 'openrouter'
 
+const EXAMPLES = [
+  {
+    label: 'Weak — RAG chatbot',
+    useCase: 'Customer support chatbot for a SaaS product with a knowledge base',
+    prompt: `You are a customer support assistant for Acme SaaS.
+
+Answer questions about our product using the provided context documents. Be friendly and professional.
+
+If you don't know the answer, say so honestly. Don't make things up.
+
+Always respond in the same language as the user's question.
+
+Format your response with clear paragraphs. Use bullet points for lists of steps.`,
+  },
+  {
+    label: 'Real — coding agent',
+    useCase: 'Agentic coding assistant that can read files, run commands, and make code changes',
+    prompt: `You are a senior software engineer AI assistant. You help users with coding tasks by reading their codebase, understanding the architecture, and making precise changes.
+
+You have access to the following tools:
+- read_file(path): Read the contents of a file
+- write_file(path, content): Write content to a file
+- run_command(cmd): Execute a shell command and return stdout/stderr
+- search_code(query): Search the codebase for a string or regex pattern
+
+When the user asks you to make a change:
+1. First understand the request
+2. Read the relevant files to understand the current code
+3. Plan the changes needed
+4. Implement the changes using write_file
+5. Run any relevant tests using run_command
+
+Be careful with destructive operations. If a command could delete data or break the build, confirm with the user first.
+
+Keep your responses concise. Show the code you changed, not lengthy explanations.
+
+If you encounter an error, try to debug it yourself before asking the user for help. Read error messages carefully and check related files.`,
+  },
+]
+
 const PROVIDERS: { value: Provider; label: string; placeholder: string }[] = [
   { value: 'anthropic', label: 'Anthropic', placeholder: 'sk-ant-...' },
   { value: 'openai', label: 'OpenAI', placeholder: 'sk-...' },
@@ -128,6 +168,17 @@ export default function Home() {
                 className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm font-mono resize-y"
                 style={{ minHeight: '240px' }}
               />
+              <div className="mt-2 flex gap-3">
+                {EXAMPLES.map((ex) => (
+                  <button
+                    key={ex.label}
+                    onClick={() => { setPrompt(ex.prompt); setUseCase(ex.useCase) }}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+                  >
+                    {ex.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
